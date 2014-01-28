@@ -57,6 +57,8 @@ app.controller('EditCtrl', function($scope, Page, DocsModel, $routeParams) {
     function loadFromData(data) {
         var odfelement = $("#odf").get(0);
         odfcanvas = new odf.OdfCanvas(odfelement);
+        $scope.canvas = odfcanvas;
+
         var buf = new ArrayBuffer(data.length);
         var bufView = new Uint8Array(buf);
         var i;
@@ -87,11 +89,25 @@ app.controller('EditCtrl', function($scope, Page, DocsModel, $routeParams) {
         session.enqueue([addMember]);
 
         sessionController.startEditing();
+        
     }
+    var title, _rev;
 
     DocsModel.get(docId, function(err, doc) {
         loadFromData(doc.data);
+        title = doc.title;
+        _rev = doc._rev;
     });
+
+    $scope.saveDoc = function() {
+        var ctr = $scope.canvas.odfContainer();
+        ctr.createByteArray(function(ba) {
+            var s = String.fromCharCode.apply(null, ba);
+            DocsModel.put(docId, _rev, title, s);
+        },
+        function(err) {});
+    };
+
 });
 
 /*
@@ -141,6 +157,14 @@ app.factory('DocsModel', ['$rootScope', 'docPouch',
         get: function(docid, callback) {
             db.get(docid, callback);
         },
+        put: function(docid, rev, title, data) {
+            db.put({
+                _id: docid,
+                _rev: rev,
+                title: title,
+                data: data
+            });
+        }
     };
 }]);
 
