@@ -9,7 +9,9 @@ function loadFromArrayBuffer(odfcanvas, data) {
       globalreadfunction.apply(runtime,
                                [path, offset, length, callback]);
     } else {
-      callback(null, data.slice(offset, offset + length));
+      console.log(data);
+      console.log(data.slice);
+      callback(null, data.subarray(offset, offset + length));
     }
   };
   runtime.getFileSize = function (path, callback) {

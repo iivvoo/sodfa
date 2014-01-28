@@ -15,30 +15,32 @@ function init() {
   for(var i=0, len=docdata.length; i<len; i++) {
     bufView[i] = docdata.charCodeAt(i);
   }
-  //loadFromArrayBuffer(odfcanvas, bufView);
-  odfcanvas.load("myfile.odt");
+  loadFromArrayBuffer(odfcanvas, bufView);
+  return;
+
+  //odfcanvas.load("myfile.odt");
   setTimeout(function() {
-  var session = new ops.Session(odfcanvas);
-  var shadowCursor = new gui.ShadowCursor(session.getOdtDocument());
+    var session = new ops.Session(odfcanvas);
+    var shadowCursor = new gui.ShadowCursor(session.getOdtDocument());
 
-  var sessionController = new gui.SessionController(session, "localmember", shadowCursor, {directStylingEnabled: true});
-  var caretManager = new gui.CaretManager(sessionController);
-  var selectionViewManager = new gui.SelectionViewManager(gui.SvgSelectionView);
+    var sessionController = new gui.SessionController(session, "localmember", shadowCursor, {directStylingEnabled: true});
+    var caretManager = new gui.CaretManager(sessionController);
+    var selectionViewManager = new gui.SelectionViewManager(gui.SvgSelectionView);
 
-  var sessionView = new gui.SessionView({}, "memberid", session, caretManager, selectionViewManager);
+    var sessionView = new gui.SessionView({}, "memberid", session, caretManager, selectionViewManager);
 
-  var addMember = new ops.OpAddMember();
-  addMember.init({
-    memberid: "localmember",
-    setProperties: {
-        fullname: "John Doe",
-        color: "red",
-        imageUrl: null
-    }
-  });
-  session.enqueue([addMember]);
+    var addMember = new ops.OpAddMember();
+    addMember.init({
+      memberid: "localmember",
+      setProperties: {
+          fullname: "John Doe",
+          color: "red",
+          imageUrl: null
+      }
+    });
+    session.enqueue([addMember]);
 
-  sessionController.startEditing();
+    sessionController.startEditing();
   }, 1000);
 }
 window.setTimeout(init, 0);
