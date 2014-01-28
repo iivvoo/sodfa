@@ -1,0 +1,50 @@
+<html>
+ <head>
+  <link rel="stylesheet" type="text/css" href="webodf.css"/>
+
+  <script src="webodf.js" type="text/javascript" charset="utf-8"></script>
+  <script src="frombyte.js" type="text/javascript" charset="utf-8"></script>
+  <script src="document.js" type="text/javascript" charset="utf-8"></script>
+  <script type="text/javascript" charset="utf-8">
+function init() {
+  var odfelement = document.getElementById("odf"),
+      odfcanvas = new odf.OdfCanvas(odfelement);
+  var buf = new ArrayBuffer(docdata.length);
+  var bufView = new Uint8Array(buf);
+
+  for(var i=0, len=docdata.length; i<len; i++) {
+    bufView[i] = docdata.charCodeAt(i);
+  }
+  //loadFromArrayBuffer(odfcanvas, bufView);
+  odfcanvas.load("myfile.odt");
+  setTimeout(function() {
+  var session = new ops.Session(odfcanvas);
+  var shadowCursor = new gui.ShadowCursor(session.getOdtDocument());
+
+  var sessionController = new gui.SessionController(session, "localmember", shadowCursor, {directStylingEnabled: true});
+  var caretManager = new gui.CaretManager(sessionController);
+  var selectionViewManager = new gui.SelectionViewManager(gui.SvgSelectionView);
+
+  var sessionView = new gui.SessionView({}, "memberid", session, caretManager, selectionViewManager);
+
+  var addMember = new ops.OpAddMember();
+  addMember.init({
+    memberid: "localmember",
+    setProperties: {
+        fullname: "John Doe",
+        color: "red",
+        imageUrl: null
+    }
+  });
+  session.enqueue([addMember]);
+
+  sessionController.startEditing();
+  }, 1000);
+}
+window.setTimeout(init, 0);
+  </script>
+ </head>
+ <body>
+  <div id="odf"></div>
+ </body>
+</html>
