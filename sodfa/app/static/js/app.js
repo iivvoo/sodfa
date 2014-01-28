@@ -1,6 +1,6 @@
 app.config(["$routeProvider", function ($routeProvider) {
     $routeProvider.when("/", { templateUrl: "home.html" })
-                  .when("/editor", { templateUrl: "editor.html",
+                  .when("/editor/:docId", { templateUrl: "editor.html",
                                       controller: "EditCtrl" })
                    .otherwise({ redirectTo: '/' });
 }]);
@@ -8,19 +8,27 @@ app.config(["$routeProvider", function ($routeProvider) {
 /*
  * Provide a method to select the active navigation
  */
-app.controller('NavCtrl', ['$scope', '$location', function($scope, $location) {
+app.controller('NavCtrl', ['$scope', '$location', 'DocsModel', function($scope, $location, DocsModel) {
     $scope.isActiveRoute = function(path) {
         return $location.path().substr(0, path.length) == path;
     };
+    /*
+     * clients are loaded async from pouchdb so we need a mechanism
+     * to be nodified once the loading is complete
+     */
+    $scope.$on('docsLoaded', function(event, docs) {
+        $scope.items = docs;
+    });
 }]);
 
 app.controller('AppCtrl', function($scope, Page) {
     Page.setTitle("Loading");
 });
 
-app.controller('EditCtrl', function($scope, Page, DocsModel) {
+app.controller('EditCtrl', function($scope, Page, DocsModel, $routeParams) {
     Page.setTitle("Editor");
     $scope.listtype = "Editor";
+    var docId = $routeParams.docId;
 
     function loadFromArrayBuffer(odfcanvas, data) {
       // overload the global read function with one that only reads
@@ -81,15 +89,8 @@ app.controller('EditCtrl', function($scope, Page, DocsModel) {
         sessionController.startEditing();
     }
 
-    DocsModel.get('demo.odf', function(err, doc) {
+    DocsModel.get(docId, function(err, doc) {
         loadFromData(doc.data);
-    });
-    /*
-     * clients are loaded async from pouchdb so we need a mechanism
-     * to be nodified once the loading is complete
-     */
-    $scope.$on('docsLoaded', function(event, clienten) {
-        $scope.items = clienten;
     });
 });
 
@@ -105,12 +106,15 @@ app.factory('DocsModel', ['$rootScope', 'docPouch',
     var documents = [];
 
     var db = docPouch;
+    var i;
 
-    db.put({
-        _id: "demo.odf",
-        title: "Demo",
-        data: docdata
-    });
+    for(i = 0; i < 10; i++) {
+        db.put({
+            _id: "demo" + i + ".odf",
+            title: "Demo " + i,
+            data: docdata
+        });
+    }
     /*
      * async retrieval of all docs (no filtering), add them to the
      * documents working set. Once done, send broadcast event
@@ -119,7 +123,7 @@ app.factory('DocsModel', ['$rootScope', 'docPouch',
         var i;
         for(i = 0; i < response.rows.length; i++) {
           var doc = response.rows[i].doc;
-          documents.push({id:i+10, name:doc.text, detail:doc.text});
+          documents.push({id:doc._id, title:doc.title});
         }
         /*
          * broadcast the "docsLoaded" event so subscribed scope(s)

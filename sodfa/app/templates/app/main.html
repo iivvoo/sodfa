@@ -33,10 +33,9 @@
             <li class="dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown">Documents <b class="caret"></b></a>
               <ul class="dropdown-menu">
-                <li><a href="#/editor">Document 1</a></li>
-                <li><a href="#">Document 1</a></li>
-                <li><a href="#">Document 1</a></li>
-                <li><a href="#">Document 1</a></li>
+                <li ng-repeat="doc in items">
+                  <a href="#/editor/<[doc.id]>"><[doc.title]></a>
+                </li>
                 <li class="divider"></li>
                 <li class="dropdown-header">Nav header</li>
                 <li><a href="#">Separated link</a></li>
