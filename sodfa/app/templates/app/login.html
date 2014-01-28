@@ -1,0 +1,62 @@
+{% extends "app/main.html" %}
+{% load staticfiles %}
+
+{% block javascript %}
+  {{block.super}}
+  <script src="{% static "js/layout.js" %}"></script>
+{% endblock %}
+
+{% block topnavbar %}
+    <div class="navbar navbar-inverse navbar-fixed-top" ng-controller="NavCtrl">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">App</a>
+        </div>
+      </div>
+    </div>
+{% endblock topnavbar %}
+
+{% block main %}
+<div>
+  <div class="row">
+    <div class="col-md-12">
+      <center><h1>Login</h1></center>
+    </div>
+  </div>
+  {% if error %}
+  <div class="row">
+    <div class="col-md-offset-2 col-md-8">
+      <div class="alert alert-danger">{{error}}</div>
+    </div>
+  </div>
+  {% endif %}
+  <div class="row">
+    <div class="col-md-offset-2 col-md-8">
+      <div class="panel">
+      <form role="form" method="POST" action="/">
+        {% csrf_token %}
+        <div class="form-group">
+          <label for="InputUsername">Username</label>
+          <input type="username" name="username" class="form-control" id="InputUsername" placeholder="Enter username">
+        </div>
+        <div class="form-group">
+          <label for="InputPassword1">Password</label>
+          <input type="password" name="password" class="form-control" id="InputPassword1" placeholder="Password">
+        </div>
+        <button type="submit" class="btn btn-default pull-right">Login</button>
+      </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr>
+
+
+{% endblock main %}
+

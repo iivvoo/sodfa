@@ -1,0 +1,69 @@
+{% extends "app/base.html" %}
+{% load staticfiles %}
+
+{% block style %}
+
+  <link rel="stylesheet" type="text/css" href="{% static "css/webodf.css" %}" />
+{% endblock %}
+
+{% block javascript %}
+  {{block.super}}
+  <script src="{% static "js/webodf.js" %}" type="text/javascript" charset="utf-8"></script>
+  <script src="{% static "js/document.js" %}" type="text/javascript" charset="utf-8"></script>
+
+  <script src="{% static "js/ui-bootstrap-0.10.0.min.js" %}"></script>
+  <script src="{% static "js/ui-bootstrap-tpls-0.10.0.min.js" %}"></script>
+  <script src="{% static "js/app.js" %}"></script>
+
+{% endblock %}
+
+{% block topnavbar %}
+    <div class="navbar navbar-inverse navbar-fixed-top" ng-controller="NavCtrl">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">App</a>
+        </div>
+        <div class="navbar-collapse collapse">
+          <ul class="nav navbar-nav">
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Documents <b class="caret"></b></a>
+              <ul class="dropdown-menu">
+                <li><a href="#/editor">Document 1</a></li>
+                <li><a href="#">Document 1</a></li>
+                <li><a href="#">Document 1</a></li>
+                <li><a href="#">Document 1</a></li>
+                <li class="divider"></li>
+                <li class="dropdown-header">Nav header</li>
+                <li><a href="#">Separated link</a></li>
+                <li><a href="#">One more separated link</a></li>
+              </ul>
+            </li>
+          </ul>
+        </div><!--/.navbar-collapse -->
+      </div>
+    </div>
+{% endblock topnavbar %}
+
+{% block jumbotron %} {# hide it #} {% endblock %}
+
+{% block main %}
+<div ng-controller="AppCtrl">
+  <ng-view>Loading...</ng-view>
+</div>
+<hr>
+
+<script type="text/ng-template" id="home.html">
+{% include "app/home.html" %}
+</script>
+
+<script type="text/ng-template" id="editor.html">
+{% include "app/editor.html" %}
+</script>
+
+{% endblock main %}
+
