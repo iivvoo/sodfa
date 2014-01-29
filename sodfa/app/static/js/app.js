@@ -21,14 +21,13 @@ app.controller('NavCtrl', ['$scope', '$location', 'DocsModel', function($scope, 
     });
 }]);
 
-app.controller('AppCtrl', function($scope, Page) {
-    Page.setTitle("Loading");
+app.controller('AppCtrl', function($scope) {
 });
 
-app.controller('EditCtrl', function($scope, Page, DocsModel, $routeParams) {
-    Page.setTitle("Editor");
-    $scope.listtype = "Editor";
+app.controller('EditCtrl', function($scope, DocsModel, $routeParams) {
     var docId = $routeParams.docId;
+    var sessionController, session;
+    var memberid = "localmember";
 
     function loadFromArrayBuffer(odfcanvas, data) {
       // overload the global read function with one that only reads
@@ -68,28 +67,39 @@ app.controller('EditCtrl', function($scope, Page, DocsModel, $routeParams) {
         }
         loadFromArrayBuffer(odfcanvas, bufView);
 
-        var session = new ops.Session(odfcanvas);
+        session = new ops.Session(odfcanvas);
         var shadowCursor = new gui.ShadowCursor(session.getOdtDocument());
 
-        var sessionController = new gui.SessionController(session, "localmember", shadowCursor, {directStylingEnabled: true});
+        sessionController = new gui.SessionController(session,
+                                      memberid, shadowCursor,
+                                      {directStylingEnabled: true});
         var caretManager = new gui.CaretManager(sessionController);
-        var selectionViewManager = new gui.SelectionViewManager(gui.SvgSelectionView);
+        var selectionViewManager = new gui.SelectionViewManager(
+                                       gui.SvgSelectionView);
 
-        var sessionView = new gui.SessionView({}, "memberid", session, caretManager, selectionViewManager);
+
+        var sessionView = new gui.SessionView({
+                editInfoMarkersInitiallyVisible: false,
+                caretAvatarsInitiallyVisible: false,
+                caretBlinksOnRangeSelect: true
+                                              }, memberid, session,
+                                              caretManager,
+                                              selectionViewManager);
+        selectionViewManager.registerCursor(shadowCursor, true);
 
         var addMember = new ops.OpAddMember();
         addMember.init({
-          memberid: "localmember",
+          memberid: memberid,
           setProperties: {
               fullname: "John Doe",
               color: "red",
-              imageUrl: null
+              imageUrl: "/static/avatar-joe.png"
           }
         });
         session.enqueue([addMember]);
 
         sessionController.startEditing();
-        
+
     }
     var title, _rev;
 
@@ -97,6 +107,8 @@ app.controller('EditCtrl', function($scope, Page, DocsModel, $routeParams) {
         loadFromData(doc.data);
         title = doc.title;
         _rev = doc._rev;
+        $scope.document_id = docId;
+        $scope.document_title = doc.title;
     });
 
     $scope.saveDoc = function() {
@@ -107,6 +119,18 @@ app.controller('EditCtrl', function($scope, Page, DocsModel, $routeParams) {
         },
         function(err) {});
     };
+
+    $scope.boldSelection = function() {
+        var fmt = sessionController.getDirectFormattingController();
+        fmt.setBold(!fmt.isBold());
+    };
+
+    $scope.italicSelection = function() {
+        var fmt = sessionController.getDirectFormattingController();
+        fmt.setItalic(!fmt.isItalic());
+
+    };
+
 
 });
 

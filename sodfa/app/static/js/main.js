@@ -28,18 +28,5 @@ app.factory('docPouch', function($rootScope) {
 });
 
 
-app.controller('RootCtrl', function($scope, Page) {
-    $scope.page = Page;
-});
-
-app.factory('Page', function($rootScope){
-    var pageTitle = "Untitled";
-    return {
-        title:function(){
-            return pageTitle;
-        },
-        setTitle:function(newTitle){
-            pageTitle = newTitle;
-        }
-    }
+app.controller('RootCtrl', function($scope) {
 });
