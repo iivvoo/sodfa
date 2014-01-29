@@ -26,10 +26,24 @@ Install instructions
 
     $ bin/django syncdb --migrate
 
-5. Start django
+5. Setup couchdb as described on 
+   http://pouchdb.com/getting-started.html, "Installing CouchDB".
+   The included "setup_couch.sh" script may be of help. Set the admin 
+   user/password to admin/admin
+
+   If you run couchdb on a different host/port or require different
+   credentials, update them in views.py
+
+6. Start django
 
     $ bin/django runserver
 
-And view the magic happen using a browser at http://localhost:8000. Bypass
-the login screen (for now) using http://localhost:8000/direct
+And view the magic happen using a browser at http://localhost:8000.
+
+You can create new accounts (and couchdb databases) by simply entering
+an available username and password.
+
+Sodfa will synchronize the documents between multiple sessions (on the same
+account) using couchdb/pouchdb. An open document will nog be updated instantly,
+that's beyond the scope of this PoC. Documents can be edited offline.
 
