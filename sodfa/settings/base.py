@@ -6,6 +6,10 @@ from settings_logging import *
 from settings_mail import *
 from settings_database import *
 
+INSTALLED_APPS += (
+    "south",
+)
+
 try:
     from local_settings import *
 except ImportError:
