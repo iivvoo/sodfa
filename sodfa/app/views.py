@@ -28,7 +28,7 @@ def setup_db(username):
         pass
 
 def main(request):
-    ctx = {}
+    ctx = {"appcfg": json.dumps({})}
 
     if request.method == "POST":
         username = request.POST.get('username', '').strip()
