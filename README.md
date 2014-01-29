@@ -30,4 +30,6 @@ Install instructions
 
     $ bin/django runserver
 
-And view the magic happen using a browser at http://localhost:8000
+And view the magic happen using a browser at http://localhost:8000. Bypass
+the login screen (for now) using http://localhost:8000/direct
+
