@@ -107,10 +107,9 @@ app.controller('EditCtrl', function($scope, DocsModel, $routeParams) {
               imageUrl: "/static/avatar-joe.png"
           }
         });
+
         session.enqueue([addMember]);
-
         sessionController.startEditing();
-
     }
     var title, _rev;
 
@@ -118,8 +117,10 @@ app.controller('EditCtrl', function($scope, DocsModel, $routeParams) {
         loadFromData(doc.data);
         title = doc.title;
         _rev = doc._rev;
-        $scope.document_id = docId;
-        $scope.document_title = doc.title;
+        $scope.$apply(function() {
+            $scope.document_id = docId;
+            $scope.document_title = doc.title;
+        });
     });
 
     $scope.saveDoc = function() {
@@ -197,4 +198,3 @@ app.factory('DocsModel', ['$rootScope', 'docPouch',
         }
     };
 }]);
-

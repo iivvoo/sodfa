@@ -29,4 +29,5 @@ app.factory('docPouch', function($rootScope) {
 
 
 app.controller('RootCtrl', function($scope) {
+    $scope.apptitle = "Sodfa";
 });
