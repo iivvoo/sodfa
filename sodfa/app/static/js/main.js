@@ -15,19 +15,20 @@ app = angular.module('app', ['ngRoute', 'ui.bootstrap'], function ($interpolateP
 
 /* Setup local pouchdb with twoway sync */
 app.factory('docPouch', function($rootScope) {
-
-  var mydb = new PouchDB("doccouch");
-  /* for some reason, $rootScope.appcfg is magically wrapped and doesn't
-   * give us real strings. Force the attribute into a string
-   */
-  var usercouch = $rootScope.appcfg.couchdb + '';
-  //repl_to = mydb.replicate.to(usercouch, {continuous: true});
-  //repl_from = mydb.replicate.from(usercouch, {continuous: true});
-  return mydb;
-
+    if($rootScope.appcfg) {
+      var mydb = new PouchDB($rootScope.appcfg.username + '-db');
+      /* for some reason, $rootScope.appcfg is magically wrapped and doesn't
+       * give us real strings. Force the attribute into a string
+       */
+      var usercouch = $rootScope.appcfg.couchdb + '';
+      repl_to = mydb.replicate.to(usercouch, {continuous: true});
+      repl_from = mydb.replicate.from(usercouch, {continuous: true});
+      return mydb;
+    }
 });
 
 
 app.controller('RootCtrl', function($scope) {
     $scope.apptitle = "Sodfa";
+    $scope.username = $scope.appcfg.username + '';
 });

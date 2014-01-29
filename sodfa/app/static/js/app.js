@@ -114,7 +114,8 @@ app.controller('EditCtrl', function($scope, DocsModel, $routeParams) {
     var title, _rev;
 
     DocsModel.get(docId, function(err, doc) {
-        loadFromData(doc.data);
+        var data = atob(doc._attachments[docId].data);
+        loadFromData(data);
         title = doc.title;
         _rev = doc._rev;
         $scope.$apply(function() {
@@ -157,14 +158,23 @@ app.factory('DocsModel', ['$rootScope', 'docPouch',
 
     var db = docPouch;
     var i;
+    var docid;
 
+    /*
     for(i = 0; i < 10; i++) {
-        db.put({
-            _id: "demo" + i + ".odf",
+        docid = "demo" + i + ".odf";
+        doc = {
+            _id: docid,
             title: "Demo " + i,
-            data: docdata
-        });
+            _attachments: {}};
+
+        doc._attachments[docid] =  {
+                "content_type":"application/vnd.oasis.opendocument.text",
+                "data": btoa(docdata)
+              };
+        db.put(doc);
     }
+    */
     /*
      * async retrieval of all docs (no filtering), add them to the
      * documents working set. Once done, send broadcast event
@@ -189,15 +199,20 @@ app.factory('DocsModel', ['$rootScope', 'docPouch',
             return documents;
         },
         get: function(docid, callback) {
-            db.get(docid, callback);
+            db.get(docid, {attachments: true}, callback);
         },
         put: function(docid, rev, title, data) {
-            db.put({
+            doc = {
                 _id: docid,
                 _rev: rev,
                 title: title,
-                data: data
-            });
+                _attachments: {}
+            };
+            doc._attachments[docid] = {
+                      "content_type":"application/vnd.oasis.opendocument.text",
+                      data: btoa(data)
+                };
+            db.put(doc);
         }
     };
 }]);

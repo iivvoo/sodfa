@@ -32,7 +32,7 @@
     <script src="{% static "js/main.js" %}"></script>
     <script type="text/javascript">
         app.run(function($rootScope) {
-            $rootScope.appcfg = '{{appcfg|safe}}';
+            $rootScope.appcfg = {{appcfg|safe}};
         });
     </script>
     {% block javascript %}
