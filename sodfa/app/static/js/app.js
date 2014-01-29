@@ -13,7 +13,7 @@ app.controller('NavCtrl', ['$scope', '$location', 'DocsModel', function($scope, 
         return $location.path().substr(0, path.length) == path;
     };
     /*
-     * clients are loaded async from pouchdb so we need a mechanism
+     * documents are loaded async from pouchdb so we need a mechanism
      * to be nodified once the loading is complete
      */
     $scope.$on('docsLoaded', function(event, docs) {
@@ -143,7 +143,7 @@ app.controller('EditCtrl', function($scope, DocsModel, $routeParams) {
 });
 
 /*
- * DocsModel provides an interface to the docPouch database (client
+ * DocsModel provides an interface to the docPouch database (document
  * specific stuff).
  */
 app.factory('DocsModel', ['$rootScope', 'docPouch',
