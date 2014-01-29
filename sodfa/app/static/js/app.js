@@ -129,7 +129,10 @@ app.controller('EditCtrl', function($scope, DocsModel, $routeParams) {
             var s = String.fromCharCode.apply(null, ba);
             DocsModel.put(docId, _rev, title, s);
         },
-        function(err) {});
+        function(err) {
+            console.log("Error while saving document " + docId);
+            console.log(err);
+        });
     };
 
     $scope.boldSelection = function() {
