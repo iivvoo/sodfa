@@ -1,4 +1,4 @@
-{% extends "app/main.html" %}
+{% extends "app/base.html" %}
 {% load staticfiles %}
 
 {% block javascript %}
@@ -20,8 +20,24 @@
     </div>
 {% endblock topnavbar %}
 
+{% block jumbotron %}
+{% endblock %}
+
+
 {% block main %}
 <div>
+  <div class="row">
+    <div class="col-md-offset-2 col-md-8">
+      <div class="panel">
+      <h1>WebODF/Couch/Pouch Demo</h1>
+      <p>Create a new account by entering a username + password below,
+      or use a previously created account to login. The system will setup
+      10 sample documents (identical at first) that will be shared between
+      all sessions using the same account.
+      </p>
+      </div>
+    </div>
+  </div>
   <div class="row">
     <div class="col-md-12">
       <center><h1>Login</h1></center>
