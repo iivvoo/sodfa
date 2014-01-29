@@ -28,46 +28,57 @@ app.controller('EditCtrl', function($scope, DocsModel, $routeParams) {
     var docId = $routeParams.docId;
     var sessionController, session;
     var memberid = "localmember";
+    var canvas;
 
-    function loadFromArrayBuffer(odfcanvas, data) {
+    function loadFromString(odfcanvas, data) {
       // overload the global read function with one that only reads
       // the data from this canvas
       var globalreadfunction = runtime.read,
       globalfilesizefunction = runtime.getFileSize,
       overridePath = "arraybuffer";
+
+      /*
+       * convert the document in plain javascript string 'data'
+       * into an ArrayBuffer
+       */
+      var buf = new ArrayBuffer(data.length);
+      var bufView = new Uint8Array(buf);
+      var i;
+
+      for(i=0, len=data.length; i<len; i++) {
+        bufView[i] = data.charCodeAt(i);
+      }
+
       runtime.read = function (path, offset, length, callback) {
         if (path !== overridePath) {
           globalreadfunction.apply(runtime,
                                    [path, offset, length, callback]);
         } else {
-          callback(null, data.subarray(offset, offset + length));
+          callback(null, bufView.subarray(offset, offset + length));
         }
       };
+
       runtime.getFileSize = function (path, callback) {
         if (path !== overridePath) {
           globalfilesizefunction.apply(runtime, [path, callback]);
         } else {
-          callback(data.length);
+          callback(bufView.length);
         }
       };
       odfcanvas.load(overridePath);
     }
 
     function loadFromData(data) {
+        /*
+         * Build an ODF editor and initialize it with a document
+         * stored (as javascript string) in 'data'
+         */
         var odfelement = $("#odf").get(0);
-        odfcanvas = new odf.OdfCanvas(odfelement);
-        $scope.canvas = odfcanvas;
+        canvas = new odf.OdfCanvas(odfelement);
 
-        var buf = new ArrayBuffer(data.length);
-        var bufView = new Uint8Array(buf);
-        var i;
+        loadFromString(canvas, data);
 
-        for(i=0, len=data.length; i<len; i++) {
-          bufView[i] = data.charCodeAt(i);
-        }
-        loadFromArrayBuffer(odfcanvas, bufView);
-
-        session = new ops.Session(odfcanvas);
+        session = new ops.Session(canvas);
         var shadowCursor = new gui.ShadowCursor(session.getOdtDocument());
 
         sessionController = new gui.SessionController(session,
@@ -112,7 +123,7 @@ app.controller('EditCtrl', function($scope, DocsModel, $routeParams) {
     });
 
     $scope.saveDoc = function() {
-        var ctr = $scope.canvas.odfContainer();
+        var ctr = canvas.odfContainer();
         ctr.createByteArray(function(ba) {
             var s = String.fromCharCode.apply(null, ba);
             DocsModel.put(docId, _rev, title, s);
@@ -133,13 +144,11 @@ app.controller('EditCtrl', function($scope, DocsModel, $routeParams) {
 
 /*
  * DocsModel provides an interface to the docPouch database (client
- * specific stuff). For demonstration purposes, some static data is also
- * included
+ * specific stuff).
  */
 app.factory('DocsModel', ['$rootScope', 'docPouch',
             function ($rootScope, docPouch) {
 
-    /* working set, will contain static + pouchdata */
     var documents = [];
 
     var db = docPouch;
