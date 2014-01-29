@@ -128,10 +128,7 @@ app.controller('EditCtrl', function($scope, DocsModel, $routeParams) {
     $scope.italicSelection = function() {
         var fmt = sessionController.getDirectFormattingController();
         fmt.setItalic(!fmt.isItalic());
-
     };
-
-
 });
 
 /*
